@@ -1,0 +1,60 @@
+class chemist:
+    def __init__(self):
+        self.inventory = np.array([], dtype=[('name', 'U10'), ('price', float), ('quantity', int)])
+        self.sales=[]
+        self.profit=[]
+
+    def add(self, name, price, quantity):
+        newitem = np.array([(name, price, quantity)], dtype=self.inventory.dtype)
+        self.inventory = np.concatenate((self.inventory, newitem))
+
+    def update(self, name, sold):
+        i = np.where(self.inventory['name'] == name)[0]
+        if (i.size>0):
+            if self.inventory[i[0]]['quantity'] >= sold:
+                self.inventory[i[0]]['quantity'] -= sold
+                sale_amount = sold * self.inventory[i[0]]['price']
+                self.sales.append(sale_amount)
+                self.profit.append(sale_amount * 0.30)
+                return True
+        return False
+    def display_sales_and_profit(self):
+        total_sales=np.sum(self.sales)
+        total_profit=np.sum(self.profit)
+        return total_sales, total_profit
+    def display(self):
+        for item in self.inventory:
+            print(f"{name} : {price} : {quantity}")
+    
+    def graph(self):
+       
+        plt.scatter(range(len(self.sales)), self.sales, label='Sales')
+        plt.scatter(range(len(self.profit)), self.profit, label='Profit')
+        #plt.scatter(sales,profit,label="Sales")
+        plt.xlabel("Total sales")
+        plt.ylabel("Profits")
+        plt.title("Scatter plot for Sales vs Profit")
+        plt.legend(loc="best")
+        plt.show()
+
+owner=chemist()
+owner.add("Crocin",6,10)
+owner.add("Benadryl",15,15)
+owner.add("Odomos",10,40)
+owner.add("Honitus",1,100)
+
+print("Initial Inventory:")
+
+owner.update("Crocin", 10)
+owner.update("Benadryl", 5)
+owner.update("Odomos", 3)
+
+print("Updated Inventory:")
+
+
+total_sales, total_profit = owner.display_sales_and_profit()
+print(f"Total Sales: {total_sales}")
+print(f"Total Profit: {total_profit}")
+
+
+owner.graph()
